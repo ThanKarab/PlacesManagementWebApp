@@ -47,12 +47,12 @@ class TestPlaceModel(TestCase):
 
 class TestPlaceAPIUrls(TestCase):
     def test_list_url(self):
-        url = reverse('place-list')
-        self.assertEqual(url, '/api/place')
+        url = reverse("place-list")
+        self.assertEqual(url, "/api/place")
 
     def test_detail_url(self):
         id = uuid.uuid4()
-        url = reverse('place-detail', args=[id])
+        url = reverse("place-detail", args=[id])
         self.assertEqual(url, f"/api/place/{id}")
 
 
