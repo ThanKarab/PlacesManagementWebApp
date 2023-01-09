@@ -12,6 +12,7 @@ djangorestframework = "^3.14"
 django-taggit = "^3.1"
 uuid = "^1.30"
 django-filter = "^22.1"
+black = "^22.12"
 
 
 [build-system]

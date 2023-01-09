@@ -6,6 +6,6 @@ from .views import (
 )
 
 urlpatterns = [
-    path('api', PlaceListApiView.as_view()),
-    path('api/<uuid:place_uuid>/', PlaceDetailApiView.as_view()),
+    path('api/place', PlaceListApiView.as_view()),
+    path('api/place/<uuid:place_uuid>/', PlaceDetailApiView.as_view()),
 ]
