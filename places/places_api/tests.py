@@ -45,6 +45,17 @@ class TestPlaceModel(TestCase):
         assert not p.tags
 
 
+class TestPlaceAPIUrls(TestCase):
+    def test_list_url(self):
+        url = reverse('place-list')
+        self.assertEqual(url, '/api/place')
+
+    def test_detail_url(self):
+        id = uuid.uuid4()
+        url = reverse('place-detail', args=[id])
+        self.assertEqual(url, f"/api/place/{id}")
+
+
 class TestPlaceGetAll(TestCase):
     sample_codes = ["A", "B", "C"]
     sample_addresses = ["athens", "patra", "naxos"]

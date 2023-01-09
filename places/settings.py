@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     "rest_framework",
     "places_api",
     "taggit",
-    "django_filters",
 ]
 
 MIDDLEWARE = [
@@ -53,7 +52,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = "places.urls"
+ROOT_URLCONF = "urls"
 
 TEMPLATES = [
     {
