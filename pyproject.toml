@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "places"
+version = "0.1.0"
+description = ""
+authors = ["ThanKarab <tkarabatsis@hotmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+django = "^4.1.5"
+djangorestframework = "^3.14"
+django-taggit = "^3.1"
+uuid = "^1.30"
+django-filter = "^22.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
