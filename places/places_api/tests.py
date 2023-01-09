@@ -6,8 +6,6 @@ from rest_framework import status
 
 from .models import Place
 
-PLACE_API_URL = '/api/place'
-
 
 class TestPlaceModel(TestCase):
     def create_sample_place(self):
@@ -18,7 +16,7 @@ class TestPlaceModel(TestCase):
             location_lon=2.34,
             name="sample_name",
             reward_checkin_points=1,
-            type="office"
+            type="office",
         )
         p.tags.add("sample_tag_1", "sample_tag_2")
         return p
@@ -60,7 +58,7 @@ class TestPlaceGetAll(TestCase):
             location_lon=2.34,
             name="sample_name",
             reward_checkin_points=1,
-            type="office"
+            type="office",
         )
         p.tags.add("sample_tag_1", "sample_tag_2")
         p.save()
@@ -71,22 +69,24 @@ class TestPlaceGetAll(TestCase):
             cls.store_sample_place(code, address)
 
     def test_get_all_places(self):
-        response = self.client.get(PLACE_API_URL)
+        response = self.client.get(reverse("place-list"))
         res_body = response.json()
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(res_body), len(self.sample_codes))
 
     def test_get_all_places_search(self):
-        response = self.client.get(PLACE_API_URL+f"?search={self.sample_addresses[0]}")
+        response = self.client.get(
+            reverse("place-list") + f"?search={self.sample_addresses[0]}"
+        )
         res_body = response.json()
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(res_body), 1)
-        self.assertEqual(res_body[0]['address'], self.sample_addresses[0])
+        self.assertEqual(res_body[0]["address"], self.sample_addresses[0])
 
     def test_get_all_places_reverse_order_on_code(self):
-        response = self.client.get(PLACE_API_URL+f"?ordering=-code")
+        response = self.client.get(reverse("place-list") + f"?ordering=-code")
         res_body = response.json()
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -95,7 +95,7 @@ class TestPlaceGetAll(TestCase):
         rev_sample_addresses = self.sample_addresses.copy()
         rev_sample_addresses.reverse()
         for address, item in zip(rev_sample_addresses, res_body):
-            self.assertEqual(item['address'], address)
+            self.assertEqual(item["address"], address)
 
 
 class TestPlaceGetSpecific(TestCase):
@@ -107,7 +107,7 @@ class TestPlaceGetSpecific(TestCase):
             location_lon=2.34,
             name="sample_name",
             reward_checkin_points=1,
-            type="office"
+            type="office",
         )
         p.tags.add("sample_tag_1", "sample_tag_2")
         p.save()
@@ -115,22 +115,24 @@ class TestPlaceGetSpecific(TestCase):
 
     def test_get_specific_place(self):
         p = self.create_place()
-        response = self.client.get(PLACE_API_URL+f"/{p.uuid}/")
+        response = self.client.get(
+            reverse("place-detail", args=[p.uuid]), format="json"
+        )
         res_body = response.json()
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(str(p.uuid), res_body['uuid'])
-        self.assertEqual(p.code, res_body['code'])
-        self.assertEqual(p.address, res_body['address'])
-        self.assertEqual(p.location_lat, res_body['location']['lat'])
-        self.assertEqual(p.location_lon, res_body['location']['lon'])
-        self.assertEqual(p.name, res_body['name'])
-        self.assertEqual(p.reward_checkin_points, res_body['reward_checkin_points'])
-        self.assertEqual(len(p.tags.all()), len(res_body['tags']))
-        self.assertEqual(p.type, res_body['type'])
+        self.assertEqual(str(p.uuid), res_body["uuid"])
+        self.assertEqual(p.code, res_body["code"])
+        self.assertEqual(p.address, res_body["address"])
+        self.assertEqual(p.location_lat, res_body["location"]["lat"])
+        self.assertEqual(p.location_lon, res_body["location"]["lon"])
+        self.assertEqual(p.name, res_body["name"])
+        self.assertEqual(p.reward_checkin_points, res_body["reward_checkin_points"])
+        self.assertEqual(len(p.tags.all()), len(res_body["tags"]))
+        self.assertEqual(p.type, res_body["type"])
 
     def test_get_specific_place_non_existing_uuid(self):
-        response = self.client.get(PLACE_API_URL+f"/{uuid.uuid4()}/")
+        response = self.client.get(reverse("place-detail", args=[uuid.uuid4()]))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
 
@@ -139,10 +141,7 @@ class TestPlacePost(TestCase):
         return {
             "address": "Voutadon 29-23, Athina 118 54",
             "code": "000000A",
-            "location": {
-                "lat": 37.978693,
-                "lon": 23.712884
-            },
+            "location": {"lat": 37.978693, "lon": 23.712884},
             "name": "HQ",
             "reward_checkin_points": 1,
             "tags": [
@@ -150,12 +149,14 @@ class TestPlacePost(TestCase):
                 "popular",
                 "favorite",
             ],
-            "type": "office"
+            "type": "office",
         }
 
     def test_post_place(self):
         request_data = self.create_place_data()
-        response = self.client.post(PLACE_API_URL, request_data, content_type='application/json')
+        response = self.client.post(
+            reverse("place-list"), request_data, content_type="application/json"
+        )
         res_body = response.json()
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -171,7 +172,9 @@ class TestPlacePost(TestCase):
     def test_post_place_bad_request(self):
         request_data = self.create_place_data()
         request_data["code"] = "very loooooooooooooong code"
-        response = self.client.post(PLACE_API_URL, request_data, content_type='application/json')
+        response = self.client.post(
+            reverse("place-list"), request_data, content_type="application/json"
+        )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
@@ -181,13 +184,10 @@ class TestPlacePut(TestCase):
         return {
             "address": "Voutadon 29-23, Athina 118 54",
             "code": "000000A",
-            "location": {
-                "lat": 37.978693,
-                "lon": 23.712884
-            },
+            "location": {"lat": 37.978693, "lon": 23.712884},
             "name": "HQ",
             "reward_checkin_points": 1,
-            "type": "office"
+            "type": "office",
         }
 
     @classmethod
@@ -200,7 +200,7 @@ class TestPlacePut(TestCase):
             location_lon=place["location"]["lon"],
             name=place["name"],
             reward_checkin_points=place["reward_checkin_points"],
-            type=place["type"]
+            type=place["type"],
         )
         p.save()
 
@@ -210,7 +210,11 @@ class TestPlacePut(TestCase):
         request_data = self.get_sample_place_dict()
         request_data["name"] = "new_name"
 
-        response = self.client.put(PLACE_API_URL+f"/{place.uuid}/", request_data, content_type='application/json')
+        response = self.client.put(
+            reverse("place-detail", args=[place.uuid]),
+            request_data,
+            content_type="application/json",
+        )
         res_body = response.json()
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -227,7 +231,11 @@ class TestPlacePut(TestCase):
         request_data = self.get_sample_place_dict()
         request_data["uuid"] = uuid.uuid4()
 
-        response = self.client.put(PLACE_API_URL+f"/{place.uuid}/", request_data, content_type='application/json')
+        response = self.client.put(
+            reverse("place-detail", args=[place.uuid]),
+            request_data,
+            content_type="application/json",
+        )
         res_body = response.json()
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -240,14 +248,22 @@ class TestPlacePut(TestCase):
         request_data = self.get_sample_place_dict()
         request_data["tags"] = [new_tag]
 
-        response = self.client.put(PLACE_API_URL+f"/{place.uuid}/", request_data, content_type='application/json')
+        response = self.client.put(
+            reverse("place-detail", args=[place.uuid]),
+            request_data,
+            content_type="application/json",
+        )
         res_body = response.json()
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn(new_tag, res_body["tags"])
 
     def test_put_place_non_existing_uuid(self):
-        response = self.client.put(PLACE_API_URL+f"/{uuid.uuid4()}/", {}, content_type='application/json')
+        response = self.client.put(
+            reverse("place-detail", args=[uuid.uuid4()]),
+            {},
+            content_type="application/json",
+        )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
 
@@ -261,14 +277,16 @@ class TestPlaceDelete(TestCase):
             location_lon=2.34,
             name="sample_name",
             reward_checkin_points=1,
-            type="office"
+            type="office",
         )
         p.save()
 
     def test_delete_place(self):
         place = Place.objects.all()[0]
 
-        response = self.client.delete(PLACE_API_URL+f"/{place.uuid}/")
+        response = self.client.delete(
+            reverse("place-detail", args=[place.uuid]), content_type="application/json"
+        )
         res_body = response.json()
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -276,5 +294,5 @@ class TestPlaceDelete(TestCase):
         self.assertEqual(len(Place.objects.all()), 0)
 
     def test_delete_place_non_existing_uuid(self):
-        response = self.client.delete(PLACE_API_URL+f"/{uuid.uuid4()}/")
+        response = self.client.delete(reverse("place-detail", args=[uuid.uuid4()]))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

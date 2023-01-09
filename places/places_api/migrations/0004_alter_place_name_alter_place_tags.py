@@ -7,19 +7,25 @@ import taggit.managers
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('taggit', '0005_auto_20220424_2025'),
-        ('places_api', '0003_uuidtaggeditem_alter_place_tags'),
+        ("taggit", "0005_auto_20220424_2025"),
+        ("places_api", "0003_uuidtaggeditem_alter_place_tags"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='place',
-            name='name',
+            model_name="place",
+            name="name",
             field=models.CharField(blank=True, max_length=50),
         ),
         migrations.AlterField(
-            model_name='place',
-            name='tags',
-            field=taggit.managers.TaggableManager(blank=True, help_text='A comma-separated list of tags.', through='places_api.UUIDTaggedItem', to='taggit.Tag', verbose_name='Tags'),
+            model_name="place",
+            name="tags",
+            field=taggit.managers.TaggableManager(
+                blank=True,
+                help_text="A comma-separated list of tags.",
+                through="places_api.UUIDTaggedItem",
+                to="taggit.Tag",
+                verbose_name="Tags",
+            ),
         ),
     ]

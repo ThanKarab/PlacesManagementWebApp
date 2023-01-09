@@ -8,26 +8,42 @@ import uuid
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('taggit', '0005_auto_20220424_2025'),
-        ('places_api', '0001_initial'),
+        ("taggit", "0005_auto_20220424_2025"),
+        ("places_api", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Place',
+            name="Place",
             fields=[
-                ('uuid', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('address', models.CharField(max_length=100)),
-                ('code', models.CharField(max_length=20)),
-                ('location_lat', models.FloatField()),
-                ('location_lon', models.FloatField()),
-                ('name', models.CharField(max_length=50)),
-                ('reward_checkin_points', models.IntegerField()),
-                ('type', models.CharField(max_length=50)),
-                ('tags', taggit.managers.TaggableManager(help_text='A comma-separated list of tags.', through='taggit.TaggedItem', to='taggit.Tag', verbose_name='Tags')),
+                (
+                    "uuid",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                ("address", models.CharField(max_length=100)),
+                ("code", models.CharField(max_length=20)),
+                ("location_lat", models.FloatField()),
+                ("location_lon", models.FloatField()),
+                ("name", models.CharField(max_length=50)),
+                ("reward_checkin_points", models.IntegerField()),
+                ("type", models.CharField(max_length=50)),
+                (
+                    "tags",
+                    taggit.managers.TaggableManager(
+                        help_text="A comma-separated list of tags.",
+                        through="taggit.TaggedItem",
+                        to="taggit.Tag",
+                        verbose_name="Tags",
+                    ),
+                ),
             ],
         ),
         migrations.DeleteModel(
-            name='Places',
+            name="Places",
         ),
     ]
