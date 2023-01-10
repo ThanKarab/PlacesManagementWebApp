@@ -17,14 +17,14 @@ class UUIDTaggedItem(GenericUUIDTaggedItemBase, TaggedItemBase):
 
 class Place(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    address = models.CharField(max_length=100, null=True)
+    address = models.CharField(max_length=100, blank=True)
     code = models.CharField(max_length=20)
-    location_lat = models.FloatField()
-    location_lon = models.FloatField()
-    name = models.CharField(max_length=50, null=True)
+    location_lat = models.DecimalField(max_digits=9, decimal_places=6)
+    location_lon = models.DecimalField(max_digits=9, decimal_places=6)
+    name = models.CharField(max_length=50, blank=True)
     reward_checkin_points = models.IntegerField()
     type = models.CharField(max_length=50)
     tags = TaggableManager(through=UUIDTaggedItem, blank=True)
 
     def __str__(self):
-        return self.name
+        return f"{self.code} @ '{self.address}', coords: '{self.location_lat}-{self.location_lon}'"
